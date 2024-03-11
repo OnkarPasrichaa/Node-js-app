@@ -37,4 +37,4 @@ jobs:
           sed -i "s/onkarpasrichaa\/node-app:[0-9]*/onkarpasrichaa\/node-app:$TAG/g" Dockerfile
           git add Dockerfile
           git commit -m "Update image tag to $TAG" || true
-          git push origin main
+          git push origin master
