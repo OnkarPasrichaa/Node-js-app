@@ -12,6 +12,9 @@ jobs:
       image: docker:20.10.9
 
     steps:
+      - name: Install git
+        run: apt-get update && apt-get install -y git
+        
       - name: Checkout code
         uses: actions/checkout@v2
 
