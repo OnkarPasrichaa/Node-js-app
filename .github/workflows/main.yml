@@ -17,6 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set Git identity
+        run: |
+          git config --global user.email "onkar.p@antino.com"
+          git config --global user.name "onkarpasrichaa"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
