@@ -1,0 +1,31 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push Docker image
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          TAG=$(date +'%Y%m%d%H%M%S')
+          docker buildx build --platform linux/amd64 -t onkarpasrichaa/node-app:$TAG .
+          echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
+          docker push onkarpasrichaa/node-app:$TAG
+          sed -i "s/onkarpasrichaa\/node-app:[0-9]*/onkarpasrichaa\/node-app:$TAG/g" Dockerfile
+          git add Dockerfile
+          git commit -m "Update image tag to $TAG" || true
+          git push origin main
