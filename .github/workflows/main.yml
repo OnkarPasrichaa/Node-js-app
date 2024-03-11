@@ -3,16 +3,17 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    
 
     steps:
       - name: Install git
         run: sudo apt-get update && sudo apt-get install -y git
-
+        
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -21,23 +22,19 @@ jobs:
           git config --global user.email "onkar.p@antino.com"
           git config --global user.name "onkarpasrichaa"
 
-      - name: Fetch all branches and tags
-        run: git fetch --prune --unshallow --tags
-
-      - name: Get commit count
-        id: commit_count
-        run: echo "::set-output name=COUNT::$(git rev-list --count HEAD)"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
       - name: Build and push Docker image
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
-          COMMIT_COUNT=$(echo "${{ steps.commit_count.outputs.COUNT }}")
-          docker build -t onkarpasrichaa/python_app:$COMMIT_COUNT .
+          TAG=$(date +'%Y%m%d%H%M%S')
+          docker build -t onkarpasrichaa/node-app:$TAG .
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          docker push onkarpasrichaa/python_app:$COMMIT_COUNT
-          sed -i "s/onkarpasrichaa\/python_app:[0-9]*/onkarpasrichaa\/python_app:$COMMIT_COUNT/g" Dockerfile
+          docker push onkarpasrichaa/node-app:$TAG
+          sed -i "s/onkarpasrichaa\/node-app:[0-9]*/onkarpasrichaa\/node-app:$TAG/g" Dockerfile
           git add Dockerfile
-          git commit -m "Update image tag to $COMMIT_COUNT" || true
-          git push origin main
+          git commit -m "Update image tag to $TAG" || true
+          git push origin master
