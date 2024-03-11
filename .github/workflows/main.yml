@@ -24,7 +24,7 @@ jobs:
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
           TAG=$(date +'%Y%m%d%H%M%S')
-          docker buildx build -t onkarpasrichaa/node-app:$TAG .
+          docker build -t onkarpasrichaa/node-app:$TAG .
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker push onkarpasrichaa/node-app:$TAG
           sed -i "s/onkarpasrichaa\/node-app:[0-9]*/onkarpasrichaa\/node-app:$TAG/g" Dockerfile
