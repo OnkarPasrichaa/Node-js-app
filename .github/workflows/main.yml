@@ -8,8 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: docker:20.10.9
+    
 
     steps:
       - name: Install git
