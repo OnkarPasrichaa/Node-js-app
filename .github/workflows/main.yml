@@ -30,7 +30,7 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
-          TAG=$(date +'%Y%m%d%H%M%S')
+          TAG=${{github.sha}}
           docker build -t onkarpasrichaa/node-app:$TAG .
           echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker push onkarpasrichaa/node-app:$TAG
@@ -42,11 +42,10 @@ jobs:
       - name: Update Image Tag Values
         run: |
          git clone https://github.com/OnkarPasrichaa/helm.git
-         TAG=$(date +'%Y%m%d%H%M%S')
          # ls | grep helm
+         TAG=${{github.sha}}
          cd helm
          chart_dir="charts/node-js-app"
-         new_image_tag=${{ github.sha }}
          sed -i "s/^  tag: .*/  tag: $TAG/" "$chart_dir/values.yaml"
          
       - name: Deploy to external repository
